@@ -4,6 +4,6 @@ Upstream-Contact: Deutsche Telekom AG <opensource@telekom.de>
 Source: https://github.com/telekom/pubsub-horizon-probe
 
 
-Files: go.mod go.sum
+Files: go.mod go.sum testdata/*
 Copyright: Copyright 2024 Deutsche Telekom IT GmbH
 License: Apache-2.0
