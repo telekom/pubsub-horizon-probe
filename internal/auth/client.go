@@ -8,15 +8,16 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/telekom/pubsub-horizon-probe/internal/utils"
 	"io"
 	"net/http"
 	"time"
 )
 
-var client = http.Client{Timeout: 10 * time.Second}
+var Client utils.HttpClient = &http.Client{Timeout: 10 * time.Second}
 
 func RetrieveToken(url string, clientId string, clientSecret string) (string, error) {
-	request, err := http.NewRequest("POST", url, bytes.NewReader([]byte("grant_type=client_credentials")))
+	request, err := http.NewRequest(http.MethodPost, url, bytes.NewReader([]byte("grant_type=client_credentials")))
 	if err != nil {
 		return "", err
 	}
@@ -25,7 +26,7 @@ func RetrieveToken(url string, clientId string, clientSecret string) (string, er
 	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	request.SetBasicAuth(clientId, clientSecret)
 
-	response, err := client.Do(request)
+	response, err := Client.Do(request)
 	if err != nil {
 		return "", err
 	}
@@ -35,7 +36,7 @@ func RetrieveToken(url string, clientId string, clientSecret string) (string, er
 		return "", fmt.Errorf("unexpected status code: %d", response.StatusCode)
 	}
 
-	bytes, err := io.ReadAll(response.Body)
+	bodyBytes, err := io.ReadAll(response.Body)
 	if err != nil {
 		return "", err
 	}
@@ -44,7 +45,7 @@ func RetrieveToken(url string, clientId string, clientSecret string) (string, er
 		AccessToken string `json:"access_token"`
 	}
 
-	if err := json.Unmarshal(bytes, &body); err != nil {
+	if err := json.Unmarshal(bodyBytes, &body); err != nil {
 		return "", err
 	}
 

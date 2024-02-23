@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-package auth_test
+package publishing_test
 
 import (
 	"testing"
@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/telekom/pubsub-horizon-probe/internal/auth"
 	"github.com/telekom/pubsub-horizon-probe/internal/config"
+	"github.com/telekom/pubsub-horizon-probe/internal/publishing"
 	"github.com/telekom/pubsub-horizon-probe/internal/test"
 )
 
@@ -19,16 +20,15 @@ func TestMain(m *testing.M) {
 	config.ReloadConfiguration()
 
 	auth.Client = new(test.MockIrisClient)
+	publishing.Client = new(test.MockHorizonClient)
 
 	m.Run()
 }
 
-func TestRetrieveToken(t *testing.T) {
-	var oidc = config.Current.Publishing.Oidc
-	var url, clientId, clientSecret = oidc.Url, oidc.ClientId, oidc.ClientSecret
+func TestPublish(t *testing.T) {
 	var assertions = assert.New(t)
 
-	token, err := auth.RetrieveToken(url, clientId, clientSecret)
+	traceId, err := publishing.Publish(&config.Current.Publishing, "./../../testdata/event.json")
 	assertions.NoError(err, "unexpected error")
-	assertions.NotEmpty(token, "token is empty")
+	assertions.NotEmpty(traceId)
 }

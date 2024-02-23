@@ -5,10 +5,14 @@
 package config
 
 type Configuration struct {
-	LogLevel   string `mapstructure:"logLevel"`
-	Publishing struct {
-		Oidc OidcConfiguration `mapstructure:"oidc"`
-	} `mapstructure:"publishing"`
+	LogLevel   string           `mapstructure:"logLevel"`
+	Publishing PublishingConfig `mapstructure:"publishing"`
+}
+
+type PublishingConfig struct {
+	Oidc          OidcConfiguration `mapstructure:"oidc"`
+	Endpoint      string            `mapstructure:"endpoint"`
+	TraceIdHeader string            `mapstructure:"traceIdHeader"`
 }
 
 type OidcConfiguration struct {
