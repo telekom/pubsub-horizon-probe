@@ -11,11 +11,15 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/telekom/pubsub-horizon-probe/internal/auth"
 	"github.com/telekom/pubsub-horizon-probe/internal/config"
+	"github.com/telekom/pubsub-horizon-probe/internal/test"
 )
 
 func TestMain(m *testing.M) {
 	viper.AddConfigPath("./../..")
 	config.ReloadConfiguration()
+
+	auth.Client = new(test.MockIrisClient)
+
 	m.Run()
 }
 
