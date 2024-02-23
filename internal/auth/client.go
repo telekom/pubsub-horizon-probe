@@ -16,7 +16,7 @@ import (
 var client = http.Client{Timeout: 10 * time.Second}
 
 func RetrieveToken(url string, clientId string, clientSecret string) (string, error) {
-	request, err := http.NewRequest("POST", url, bytes.NewReader([]byte("grant_type=client_credentials")))
+	request, err := http.NewRequest(http.MethodPost, url, bytes.NewReader([]byte("grant_type=client_credentials")))
 	if err != nil {
 		return "", err
 	}
