@@ -35,7 +35,7 @@ func RetrieveToken(url string, clientId string, clientSecret string) (string, er
 		return "", fmt.Errorf("unexpected status code: %d", response.StatusCode)
 	}
 
-	bytes, err := io.ReadAll(response.Body)
+	bodyBytes, err := io.ReadAll(response.Body)
 	if err != nil {
 		return "", err
 	}
@@ -44,7 +44,7 @@ func RetrieveToken(url string, clientId string, clientSecret string) (string, er
 		AccessToken string `json:"access_token"`
 	}
 
-	if err := json.Unmarshal(bytes, &body); err != nil {
+	if err := json.Unmarshal(bodyBytes, &body); err != nil {
 		return "", err
 	}
 
