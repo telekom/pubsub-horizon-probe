@@ -37,9 +37,11 @@ func setDefault() {
 
 	viper.SetDefault("logLevel", "info")
 
-	viper.SetDefault("publishing.oidc.url", "https://oidc.example.com/")
+	viper.SetDefault("publishing.endpoint", "https://horizon.example.com/events")
 	viper.SetDefault("publishing.oidc.clientId", "client-id")
 	viper.SetDefault("publishing.oidc.clientSecret", "client-secret")
+	viper.SetDefault("publishing.oidc.url", "https://oidc.example.com/")
+	viper.SetDefault("publishing.traceIdHeader", "X-B3-Traceid")
 }
 
 func readConfiguration() *Configuration {
