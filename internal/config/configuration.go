@@ -7,12 +7,18 @@ package config
 type Configuration struct {
 	LogLevel   string           `mapstructure:"logLevel"`
 	Publishing PublishingConfig `mapstructure:"publishing"`
+	Consuming  ConsumerConfig   `mapstructure:"consuming"`
 }
 
 type PublishingConfig struct {
 	Oidc          OidcConfiguration `mapstructure:"oidc"`
 	Endpoint      string            `mapstructure:"endpoint"`
 	TraceIdHeader string            `mapstructure:"traceIdHeader"`
+}
+
+type ConsumerConfig struct {
+	Oidc     OidcConfiguration `mapstructure:"oidc"`
+	Endpoint string            `mapstructure:"endpoint"`
 }
 
 type OidcConfiguration struct {
