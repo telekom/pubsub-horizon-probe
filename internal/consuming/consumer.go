@@ -6,8 +6,10 @@ package consuming
 
 import (
 	"bufio"
+	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/telekom/pubsub-horizon-probe/internal/messaging"
 	"net/http"
 	"time"
 
@@ -21,17 +23,23 @@ import (
 var Client utils.HttpClient = &http.Client{Timeout: 65 * time.Second}
 
 type Consumer struct {
-	Events chan ConsumedEvent
+	Events chan messaging.Message
 	config *config.ConsumerConfig
+
+	ctx    context.Context
+	cancel context.CancelFunc
 }
 
 // NewConsumer creates a new Consumer instance with the given consumerConfig.
 // It opens a connection, initializes the Events channel, and returns the Consumer instance.
 // If an error occurs while opening the connection, it returns nil and the error.
 func NewConsumer(consumerConfig *config.ConsumerConfig) *Consumer {
+	ctx, cancel := context.WithCancel(context.Background())
 	return &Consumer{
-		Events: make(chan ConsumedEvent),
+		Events: make(chan messaging.Message),
 		config: consumerConfig,
+		ctx:    ctx,
+		cancel: cancel,
 	}
 }
 
@@ -48,6 +56,9 @@ func (c *Consumer) Start() error {
 	for {
 		select {
 
+		case <-c.ctx.Done():
+			return nil
+
 		case <-connection.Request.Context().Done():
 			if connection.StatusCode == http.StatusGatewayTimeout {
 				return errors.NewTimeoutError("gateway timeout")
@@ -59,7 +70,7 @@ func (c *Consumer) Start() error {
 				return err
 			}
 
-			var event ConsumedEvent
+			var event messaging.Message
 			if err := json.Unmarshal(line, &event); err != nil {
 				panic(err)
 			}
@@ -67,6 +78,11 @@ func (c *Consumer) Start() error {
 			c.Events <- event
 		}
 	}
+}
+
+// Stop completely stops reading from the data stream.
+func (c *Consumer) Stop() {
+	c.cancel()
 }
 
 // openConnection opens a connection to the specified URL using the provided consumerConfig.

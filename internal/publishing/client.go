@@ -7,6 +7,7 @@ package publishing
 import (
 	"errors"
 	"fmt"
+	"github.com/telekom/pubsub-horizon-probe/internal/messaging"
 	"net/http"
 	"strings"
 	"time"
@@ -24,9 +25,10 @@ func init() {
 }
 
 // Publish publishes an event produced to the given url by rendering the given templateFile.
-// This returned string will be the trace-id if the publishing request succeeds.
+// This returned string will be the event-id if the publishing request succeeds.
 func Publish(publishingConfig *config.PublishingConfig, templateFile string) (string, error) {
-	renderedFile, err := templating.RenderFile(templateFile)
+	var message = new(messaging.Message)
+	renderedFile, err := templating.RenderFile(templateFile, message)
 	if err != nil {
 		return "", err
 	}
@@ -50,12 +52,5 @@ func Publish(publishingConfig *config.PublishingConfig, templateFile string) (st
 		return "", errors.New("unable to produce event because there are no subscribers")
 	}
 
-	var traceId string
-	traceIdHeader, ok := response.Header[publishingConfig.TraceIdHeader]
-	if !ok || len(traceIdHeader) < 1 {
-		return "", errors.New("no trace id present")
-	}
-	traceId = traceIdHeader[0]
-
-	return traceId, nil
+	return message.Id, nil
 }
