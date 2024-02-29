@@ -25,3 +25,12 @@ var startCmd = &cobra.Command{
 		os.Exit(1)
 	},
 }
+
+func init() {
+	startCmd.Flags().IntP("message-count", "c", 3, "the amount of messaged sent")
+	startCmd.Flags().DurationP("timeout", "t", 30*time.Second, "the timeout after which the test is considered failed")
+	startCmd.Flags().String("template", "", "the template file used to generate events")
+
+	_ = startCmd.MarkFlagFilename("template")
+	_ = startCmd.MarkFlagRequired("template")
+}
