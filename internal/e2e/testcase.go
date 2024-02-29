@@ -44,13 +44,25 @@ func (t *TestCase) Start() bool {
 	var testWg = new(sync.WaitGroup)
 	testWg.Add(2)
 
+	defer t.cancel()
 	go t.publish(testWg)
 	go t.consume(testWg)
 
-	testWg.Wait()
+	var complete = make(chan bool, 1)
+	go func() {
+		defer close(complete)
+		testWg.Wait()
+	}()
 
-	t.cancel()
-	return true
+	select {
+
+	case <-complete:
+		return true // Completed without complications
+
+	case <-t.ctx.Done():
+		return false // Reached timeout (so context has already been cancelled)
+
+	}
 }
 
 func (t *TestCase) consume(wg *sync.WaitGroup) {
@@ -60,23 +72,28 @@ func (t *TestCase) consume(wg *sync.WaitGroup) {
 	go t.openConnection(consumer)
 
 	for {
-		msg, ok := <-consumer.Events
-		if !ok {
-			log.Fatal().Msg("consumer channel closed")
-		}
+		select {
 
-		if t.results.HasRecorded(msg.Id) {
-			t.results.RecordAsReceived(msg.Id)
-			log.Info().Fields(map[string]any{
-				"eventId": msg.Id,
-				"latency": fmt.Sprintf("%dms", t.results.GetResult(msg.Id).GetLatencyMs()),
-			}).Msgf("Received message")
+		case <-t.ctx.Done():
+			return
 
-			if t.results.IsComplete() {
-				return
+		default:
+			msg := <-consumer.Events
+
+			if t.results.HasRecorded(msg.Id) {
+				t.results.RecordAsReceived(msg.Id)
+				log.Info().Fields(map[string]any{
+					"eventId": msg.Id,
+					"latency": fmt.Sprintf("%dms", t.results.GetResult(msg.Id).GetLatencyMs()),
+				}).Msgf("Received message")
+
+				if t.results.IsComplete() {
+					return
+				}
+			} else {
+				log.Warn().Msgf("Received unexpected message with id %s. Skipping...", msg.Id)
 			}
-		} else {
-			log.Warn().Msgf("Received unexpected message with id %s. Skipping...", msg.Id)
+
 		}
 	}
 }

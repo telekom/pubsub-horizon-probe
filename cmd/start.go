@@ -20,9 +20,10 @@ var startCmd = &cobra.Command{
 		if testCase.Start() {
 			log.Info().Msg("Test succeeded")
 			os.Exit(0)
+		} else {
+			log.Error().Msg("Test didn't succeed")
+			os.Exit(1)
 		}
-		log.Error().Msg("Test didn't succeed")
-		os.Exit(1)
 	},
 }
 
