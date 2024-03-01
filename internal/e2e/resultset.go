@@ -67,3 +67,16 @@ func (s *ResultSet) IsComplete() bool {
 	}
 	return true
 }
+
+func (s *ResultSet) Surpasses(duration time.Duration) bool {
+	for _, result := range s.results {
+		if !result.IsComplete() {
+			continue
+		}
+
+		if result.GetLatency() > duration {
+			return true
+		}
+	}
+	return false
+}

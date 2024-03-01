@@ -16,7 +16,12 @@ var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Start probing",
 	Run: func(cmd *cobra.Command, args []string) {
-		var testCase = e2e.NewTestCase(3, 30*time.Second, "./testdata/event.json")
+		var messageCount, _ = cmd.Flags().GetInt("message-count")
+		var duration, _ = cmd.Flags().GetDuration("timeout")
+		var maxLatency, _ = cmd.Flags().GetDuration("max-latency")
+		var template, _ = cmd.Flags().GetString("template")
+
+		var testCase = e2e.NewTestCase(messageCount, duration, maxLatency, template)
 		if testCase.Start() {
 			log.Info().Msg("Test succeeded")
 			os.Exit(0)
@@ -30,6 +35,7 @@ var startCmd = &cobra.Command{
 func init() {
 	startCmd.Flags().IntP("message-count", "c", 3, "the amount of messaged sent")
 	startCmd.Flags().DurationP("timeout", "t", 30*time.Second, "the timeout after which the test is considered failed")
+	startCmd.Flags().DurationP("max-latency", "l", 5*time.Second, "the duration after which a message delivery is considered 'too late'")
 	startCmd.Flags().String("template", "", "the template file used to generate events")
 
 	_ = startCmd.MarkFlagFilename("template")

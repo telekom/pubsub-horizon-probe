@@ -14,8 +14,11 @@ type Result struct {
 }
 
 func (r *Result) GetLatencyMs() int64 {
-	var duration = r.Received.Sub(r.Sent)
-	return duration.Milliseconds()
+	return r.GetLatency().Milliseconds()
+}
+
+func (r *Result) GetLatency() time.Duration {
+	return r.Received.Sub(r.Sent)
 }
 
 func (r *Result) IsComplete() bool {

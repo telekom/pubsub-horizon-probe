@@ -23,17 +23,19 @@ type TestCase struct {
 	results      ResultSet
 	messageCount int
 	testFile     string
+	maxLatency   time.Duration
 
 	ctx    context.Context
 	cancel context.CancelFunc
 }
 
-func NewTestCase(messageCount int, timeout time.Duration, testFile string) TestCase {
+func NewTestCase(messageCount int, timeout time.Duration, maxLatency time.Duration, testFile string) TestCase {
 	var ctx, cancel = context.WithTimeout(context.Background(), timeout)
 	return TestCase{
 		results:      NewResultSet(),
 		messageCount: messageCount,
 		testFile:     testFile,
+		maxLatency:   maxLatency,
 
 		ctx:    ctx,
 		cancel: cancel,
@@ -58,15 +60,22 @@ func (t *TestCase) Start() bool {
 
 	select {
 
-	case err := <-errs:
-		log.Error().Err(err).Msg("An error occurred while publishing")
+	case err := <-errs: // Handle errors during publishing
+		log.Error().Err(err).Msg("Could not publish event")
 		return false
 
-	case <-complete:
-		return true // Completed without complications
+	case <-complete: // Completed without complications (continue evaluating result)
+		var success = false
 
-	case <-t.ctx.Done():
-		return false // Reached timeout (so context has already been cancelled)
+		if t.results.IsComplete() && !t.results.Surpasses(t.maxLatency) {
+			success = true
+		} else {
+			log.Info().Msgf("The results are incomplete or at least one of the results surpassed the max duration of %s", t.maxLatency.String())
+		}
+		return success
+
+	case <-t.ctx.Done(): // Reached timeout (so context has already been cancelled)
+		return false
 
 	}
 }
