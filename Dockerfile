@@ -17,4 +17,4 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s -extldflags=-
 
 FROM scratch
 COPY --from=build /build/out/probe probe
-ENTRYPOINT ["./probe", "start"]
+ENTRYPOINT ["./probe", "start", "--template", "template.json"]
