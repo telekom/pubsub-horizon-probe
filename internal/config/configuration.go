@@ -11,9 +11,8 @@ type Configuration struct {
 }
 
 type PublishingConfig struct {
-	Oidc          OidcConfiguration `mapstructure:"oidc"`
-	Endpoint      string            `mapstructure:"endpoint"`
-	TraceIdHeader string            `mapstructure:"traceIdHeader"`
+	Oidc     OidcConfiguration `mapstructure:"oidc"`
+	Endpoint string            `mapstructure:"endpoint"`
 }
 
 type ConsumerConfig struct {

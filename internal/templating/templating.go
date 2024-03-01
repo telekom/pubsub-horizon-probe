@@ -6,17 +6,19 @@ package templating
 
 import (
 	"github.com/google/uuid"
+	"github.com/telekom/pubsub-horizon-probe/internal/messaging"
 	"os"
 	"strings"
 	"text/template"
 )
 
-var probeTemplate = template.New("probe").Funcs(map[string]any{
-	"EventId": generateUuid,
-	"TraceId": generateUuid,
-})
+func RenderFile(file string, message *messaging.Message) (string, error) {
+	var eventId, traceId = generateUuid(), generateUuid()
+	var probeTemplate = template.New("probe").Funcs(map[string]any{
+		"EventId": func() string { return eventId },
+		"TraceId": func() string { return traceId },
+	})
 
-func RenderFile(file string) (string, error) {
 	bytes, err := os.ReadFile(file)
 	if err != nil {
 		return "", err
@@ -32,10 +34,11 @@ func RenderFile(file string) (string, error) {
 		return "", err
 	}
 
+	message.Id = eventId
 	return rendered.String(), nil
 }
 
 func generateUuid() string {
-	var id, _ = uuid.NewUUID()
+	var id, _ = uuid.NewRandom()
 	return id.String()
 }

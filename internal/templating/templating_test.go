@@ -7,6 +7,7 @@ package templating_test
 import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"github.com/telekom/pubsub-horizon-probe/internal/messaging"
 	"github.com/telekom/pubsub-horizon-probe/internal/templating"
 	"os"
 	"path/filepath"
@@ -25,7 +26,9 @@ func TestRenderFile(t *testing.T) {
 		unexpected = string(bytes)
 	}
 
-	rendered, err := templating.RenderFile(testFile)
+	var message messaging.Message
+	rendered, err := templating.RenderFile(testFile, &message)
 	assertions.NoError(err, "unexpected error")
+	assertions.NotEmpty(message.Id, "message id is empty")
 	assertions.NotEqual(unexpected, rendered, "expected template to render correctly")
 }

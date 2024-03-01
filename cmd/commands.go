@@ -4,10 +4,12 @@
 
 package cmd
 
-import "github.com/rs/zerolog/log"
+import (
+	"fmt"
+)
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		log.Fatal().Err(err).Msg("Failed to execute root command")
+		fmt.Println(err.Error())
 	}
 }

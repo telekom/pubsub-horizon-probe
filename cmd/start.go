@@ -5,47 +5,39 @@
 package cmd
 
 import (
-	"errors"
-	"fmt"
-	"io"
-	"os"
-
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
-	"github.com/telekom/pubsub-horizon-probe/internal/config"
-	"github.com/telekom/pubsub-horizon-probe/internal/consuming"
+	"github.com/telekom/pubsub-horizon-probe/internal/e2e"
+	"os"
+	"time"
 )
 
 var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Start probing",
 	Run: func(cmd *cobra.Command, args []string) {
-		consumer := consuming.NewConsumer(&config.Current.Consuming)
+		var messageCount, _ = cmd.Flags().GetInt("message-count")
+		var duration, _ = cmd.Flags().GetDuration("timeout")
+		var maxLatency, _ = cmd.Flags().GetDuration("max-latency")
+		var template, _ = cmd.Flags().GetString("template")
 
-		go func() {
-			for {
-				if err := consumer.Start(); err != nil {
-					if os.IsTimeout(err) {
-						log.Debug().Msg("Connection timed out. Reconnecting...")
-						continue
-					}
-
-					if errors.Is(err, io.EOF) {
-						log.Debug().Msg("Received end of stream (EOF). Reconnecting...")
-						continue
-					}
-					log.Fatal().Err(err).Msg("Error while consuming events")
-				}
-			}
-		}()
-
-		for {
-			event, ok := <-consumer.Events
-			if !ok {
-				log.Fatal().Msg("Consumer channel closed")
-			} else {
-				fmt.Printf("Received Event: %+v\n", event)
-			}
+		var testCase = e2e.NewTestCase(messageCount, duration, maxLatency, template)
+		if testCase.Start() {
+			log.Info().Msg("Test succeeded")
+			os.Exit(0)
+		} else {
+			log.Error().Msg("Test didn't succeed")
+			os.Exit(1)
 		}
 	},
+}
+
+func init() {
+	startCmd.Flags().IntP("message-count", "c", 3, "the amount of messaged sent")
+	startCmd.Flags().DurationP("timeout", "t", 30*time.Second, "the timeout after which the test is considered failed")
+	startCmd.Flags().DurationP("max-latency", "l", 5*time.Second, "the duration after which a message delivery is considered 'too late'")
+	startCmd.Flags().String("template", "", "the template file used to generate events")
+
+	_ = startCmd.MarkFlagFilename("template")
+	_ = startCmd.MarkFlagRequired("template")
 }
