@@ -9,11 +9,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/telekom/pubsub-horizon-probe/internal/errors"
 	"github.com/telekom/pubsub-horizon-probe/internal/messaging"
 	"net/http"
 	"time"
 
-	"github.com/telekom/pubsub-horizon-probe/internal/errors"
 	"github.com/telekom/pubsub-horizon-probe/internal/utils"
 
 	"github.com/telekom/pubsub-horizon-probe/internal/auth"
@@ -61,7 +61,7 @@ func (c *Consumer) Start() error {
 
 		case <-connection.Request.Context().Done():
 			if connection.StatusCode == http.StatusGatewayTimeout {
-				return errors.NewTimeoutError("gateway timeout")
+				return errors.ErrGatewayTimeout
 			}
 
 		default:

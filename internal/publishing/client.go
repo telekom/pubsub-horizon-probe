@@ -5,8 +5,8 @@
 package publishing
 
 import (
-	"errors"
 	"fmt"
+	"github.com/telekom/pubsub-horizon-probe/internal/errors"
 	"github.com/telekom/pubsub-horizon-probe/internal/messaging"
 	"net/http"
 	"strings"
@@ -48,8 +48,9 @@ func Publish(publishingConfig *config.PublishingConfig, templateFile string) (st
 		return "", err
 	}
 
+	// Implement a custom error here!
 	if response.StatusCode == http.StatusAccepted {
-		return "", errors.New("unable to produce event because there are no subscribers")
+		return "", errors.ErrNoSubscribers
 	}
 
 	return message.Id, nil

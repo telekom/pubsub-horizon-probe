@@ -44,8 +44,10 @@ func (t *TestCase) Start() bool {
 	var testWg = new(sync.WaitGroup)
 	testWg.Add(2)
 
+	var errs = make(chan error, 1)
+
 	defer t.cancel()
-	go t.publish(testWg)
+	go t.publish(testWg, errs)
 	go t.consume(testWg)
 
 	var complete = make(chan bool, 1)
@@ -55,6 +57,10 @@ func (t *TestCase) Start() bool {
 	}()
 
 	select {
+
+	case err := <-errs:
+		log.Error().Err(err).Msg("An error occurred while publishing")
+		return false
 
 	case <-complete:
 		return true // Completed without complications
@@ -123,7 +129,7 @@ func (t *TestCase) openConnection(consumer *consuming.Consumer) {
 	}
 }
 
-func (t *TestCase) publish(wg *sync.WaitGroup) {
+func (t *TestCase) publish(wg *sync.WaitGroup, errs chan<- error) {
 	defer wg.Done()
 
 	var publishingWorkers = new(sync.WaitGroup)
@@ -136,7 +142,8 @@ func (t *TestCase) publish(wg *sync.WaitGroup) {
 			defer publishingWorkers.Done()
 			eventId, err := publishing.Publish(&config.Current.Publishing, t.testFile)
 			if err != nil {
-				panic(err)
+				errs <- err
+				return
 			}
 
 			t.results.RecordAsSent(eventId)
