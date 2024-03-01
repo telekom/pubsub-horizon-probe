@@ -48,7 +48,6 @@ func Publish(publishingConfig *config.PublishingConfig, templateFile string) (st
 		return "", err
 	}
 
-	// Implement a custom error here!
 	if response.StatusCode == http.StatusAccepted {
 		return "", errors.ErrNoSubscribers
 	}
