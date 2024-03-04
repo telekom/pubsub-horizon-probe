@@ -8,5 +8,5 @@
 *.yml
 !.github/workflows/*.yml
 !.gitlab-ci.yml
-!docker-compose.yml
+docker-compose.yml
 *.exe
