@@ -25,6 +25,25 @@ probe init
 ```bash
 probe start --template template.json
 ```
+### Using a template
+To define the content of the event you are sending to Horizon, you have to provide a template in the form of a JSON file.
+The `{{ EventId }}` placeholder is automatically replaced with a fresh UUID.
+
+**A template could look as follows**:
+```json
+{
+  "id":"{{ EventId }}",
+  "source":"http://apihost/some/path/resource/1234",
+  "specversion":"1.0",
+  "type":"my.example.event.v1",
+  "datacontenttype":"application/json",
+  "dataref":"http://apihost/some/api/v1/resource/1234",
+  "data":{
+    "hello": "world"
+  },
+  "dataschema":"http://apihost/schema/definition.json"
+}
+```
 
 ### Behaviour
 The success status of the application can be determined by checking the exit code. 
