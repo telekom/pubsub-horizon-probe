@@ -34,17 +34,17 @@ exit-code **1** instead of **0**.
 ## Configuration
 All the configuration properties can be set in your `config.yml` or with an environment variable. 
 
-| Path                         | Variable                           | Type   | Default                                      | Description                                     |
-|------------------------------|------------------------------------|--------|----------------------------------------------|-------------------------------------------------|
-| logLevel                     | PROBE_LOGLEVEL                     | string | info                                         | Defines the log-level.                          |
-| publishing.endpoint          | PROBE_PUBLISHING_ENDPOINT          | string | https://horizon.example.com/events           | Horizon endpoint for publishing events.         |
-| publishing.oidc.url          | PROBE_PUBLISHING_OIDC_URL          | string | https://oidc.example.com/                    | OIDC token endpoint of the idp.                 |
-| publishing.oidc.clientId     | PROBE_PUBLISHING_OIDC_CLIENTID     | string | client-id                                    | The client-id that is passed to the idp.        |
-| publishing.oidc.clientSecret | PROBE_PUBLISHING_OIDC_CLIENTSECRET | string | client-secret                                | The client-secret that is passed to the idp.    |
-| consuming.endpoint           | PROBE_CONSUMING_ENDPOINT           | string | https://horizon.example.com/events/somesubid | Horizon endpoint for retrieving events via sse. |
-| consuming.oidc.url           | PROBE_CONSUMING_OIDC_URL           | string | https://oidc.example.com/                    | OIDC token endpoint of the idp.                 |
-| consuming.oidc.clientId      | PROBE_CONSUMING_OIDC_CLIENTID      | string | client-id                                    | The client-id that is passed to the idp.        |
-| consuming.oidc.clientSecret  | PROBE_CONSUMING_OIDC_CLIENTSECRET  | string | client-secret                                | The client-secret that is passed to the idp.    |
+| Path                         | Variable                           | Type   | Default                                    | Description                                     |
+|------------------------------|------------------------------------|--------|--------------------------------------------|-------------------------------------------------|
+| logLevel                     | PROBE_LOGLEVEL                     | string | info                                       | Defines the log-level.                          |
+| publishing.endpoint          | PROBE_PUBLISHING_ENDPOINT          | string | https://horizon.example.com/events         | Horizon endpoint for publishing events.         |
+| publishing.oidc.url          | PROBE_PUBLISHING_OIDC_URL          | string | https://oidc.example.com/                  | OIDC token endpoint of the idp.                 |
+| publishing.oidc.clientId     | PROBE_PUBLISHING_OIDC_CLIENTID     | string | client-id                                  | The client-id that is passed to the idp.        |
+| publishing.oidc.clientSecret | PROBE_PUBLISHING_OIDC_CLIENTSECRET | string | client-secret                              | The client-secret that is passed to the idp.    |
+| consuming.endpoint           | PROBE_CONSUMING_ENDPOINT           | string | https://horizon.example.com/sse/somesubid  | Horizon endpoint for retrieving events via sse. |
+| consuming.oidc.url           | PROBE_CONSUMING_OIDC_URL           | string | https://oidc.example.com/                  | OIDC token endpoint of the idp.                 |
+| consuming.oidc.clientId      | PROBE_CONSUMING_OIDC_CLIENTID      | string | client-id                                  | The client-id that is passed to the idp.        |
+| consuming.oidc.clientSecret  | PROBE_CONSUMING_OIDC_CLIENTSECRET  | string | client-secret                              | The client-secret that is passed to the idp.    |
 
 ## Docker
 Probe is supposed to run in a Docker container.

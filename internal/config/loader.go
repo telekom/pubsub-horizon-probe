@@ -42,7 +42,7 @@ func setDefault() {
 	viper.SetDefault("publishing.oidc.clientSecret", "client-secret")
 	viper.SetDefault("publishing.oidc.url", "https://oidc.example.com/")
 
-	viper.SetDefault("consuming.endpoint", "https://horizon.example.com/events/somesubid")
+	viper.SetDefault("consuming.endpoint", "https://horizon.example.com/sse/somesubid")
 	viper.SetDefault("consuming.oidc.clientId", "client-id")
 	viper.SetDefault("consuming.oidc.clientSecret", "client-secret")
 	viper.SetDefault("consuming.oidc.url", "https://oidc.example.com/")
