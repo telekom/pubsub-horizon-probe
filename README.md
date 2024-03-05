@@ -10,7 +10,7 @@ SPDX-License-Identifier: CC0-1.0
 </p>
 
 ## Overview
-Probe is a tool for performing Horizon E2E tests 📡 
+Probe is a tool for performing Horizon SSE E2E tests 📡 
 
 ## Code of Conduct
 This project has adopted the [Contributor Covenant](https://www.contributor-covenant.org/) in version 2.1 as our code of conduct. Please see the details in our [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). All contributors must abide by the code of conduct.
