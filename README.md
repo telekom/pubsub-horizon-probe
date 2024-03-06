@@ -9,6 +9,9 @@ SPDX-License-Identifier: CC0-1.0
   <h1 align="center">Probe</h1>
 </p>
 
+[![REUSE status](https://api.reuse.software/badge/github.com/telekom/pubsub-horizon-probe)](https://api.reuse.software/info/github.com/telekom/pubsub-horizon-probe)
+[![Go Test](https://github.com/telekom/pubsub-horizon-probe/actions/workflows/go-test.yml/badge.svg)](https://github.com/telekom/pubsub-horizon-probe/actions/workflows/go-test.yml)
+
 ## Overview
 Probe is a tool for performing Horizon SSE E2E tests 📡 
 
